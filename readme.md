@@ -1,5 +1,5 @@
 Esse código é um simples criador de personagem de RPG. ele se baseia em 3 principais etapas:
-Classe, Distribuição de status e 
+Escolha de classe, Distribuição de status e Escolha de raça.
 
 Etapa 1: Seleção de classe:
 Há uma matriz com os dados de todas as classes. O comando seleciona e puxa os dados da coluna que equivale a classe. No código há comentários para se basear na ordem, mas escreverei aqui. statusbaseclasse[linha][coluna]
