@@ -70,6 +70,14 @@ int main()
         "Bardo",
         "Ladino"
     };
+
+/*    enum Classes {
+    CLERIC = 0,
+    WARRIOR = 1,
+    BARD = 2,
+    ROGUE = 3
+};
+    */
     
     //status do player//
     char caracp[3][20];
