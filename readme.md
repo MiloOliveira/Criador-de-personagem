@@ -26,4 +26,3 @@ Classe:
 "Intelecto",
 "Sabedoria",
 "Carisma"
-
