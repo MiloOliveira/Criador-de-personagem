@@ -2,31 +2,18 @@ Esse código é um simples criador de personagem de RPG. ele se baseia em 3 prin
 Escolha de classe, Distribuição de status e Escolha de raça.
 
 Etapa 1: Seleção de classe:
-Há uma matriz com os dados de todas as classes. O comando seleciona e puxa os dados da coluna que equivale a classe. No código há comentários para se basear na ordem, mas escreverei aqui. statusbaseclasse[linha][coluna]
-Linhas: 
-"Vida máxima",
-"Mana máxima",
-"Classe de Armadura"  
-Colunas         
-"Clérigo",
-"Guerreiro",
-"Bardo",
-"Ladino"
+Há uma struct com os dados de todas as classes, guardando de acordo com a ordem da struct, de cima para baixo. Quando você selecionar, reserverá em uma struct chamada Sheet(ficha), que é a ficha do player, e puxa os atributos de vida, mana e CA e copia para a ficha.
 
-Isso gera um par ordenado que cadastra no array do player os dados da classe
 
 Etapa 2: Distribuição de status:
-A distribuição de status é feita um por um, sendo For, Dex, Vig, Int, Sab e Car. A pessoa tem uma quantia x de pontos para dsitribuir e é obrigatório por, pelo menos, 1 ponto em cada. Após isso, cadastra em outro array do player
+A distribuição de status é feita um por um, sendo For, Dex, Vig, Int, Sab e Car. A pessoa tem uma quantia x de pontos para dsitribuir e é obrigatório por, pelo menos, 1 ponto em cada. Após isso, cadastra na Sheet. Cada atributo tem um limite de quantos pontos pode por, que é definido por um #define. Se sobrarem pontos, a pessoa pode reordenar todos os pontos que colocou.
 
-Etapa 3: Seleção de Raça
-Aqui, segue o mesmo esquema de par ordenado da etapa 1, porém com 2 matrizes: uma indica o status que aumentará, identificado de 0 a 5, e em outra o valor do bônus agregado.
-As colunas indicam a raça. Cada linha é um atributo diferente que é beneficiado. Ordem das colunas:
-     "Sireno",
-     "Polar",
-     "Gatuno",
-     "Harpia"
+Etapa 3: Seleção de Raça:
+A pessoa pode escolher a raça de seu personagem, e cada um dá um bônus de status em alguns status do player, podendo superar o limite de pontos da etapa 2. Cada raça está cadastrada em um struct, com enums indicando que status são aplicados os buffs.
 
-Final: Impressão de todas as características nessa ordem:
+Final: Impressão da ficha: 
+No final, faz as somas de bonus de raça e status para os atributos (Hp, mana e CA)  e imprime a ficha do player, nessa ordem:
+
 Nome:
 Raça:
 Classe:
@@ -40,13 +27,3 @@ Classe:
 "Sabedoria",
 "Carisma"
 
-Caso queira usar o programa para algum projeto, para cada etapa recomendo que:
-1:
-Defina todos os #define para o seu cenário,
-Escreva todas as classes e raças nas matrizes,
-Defina todos os valores numéricos, seguindo a mesma sequência para todos (Ex.: Se a coluna 1 tem dados do clérigo,em todas as matrizes, a coluna 1 é do clérigo),
-
-2:
-Cheque se a distribuição e checagem está feita corretamente, caso mexa na quantia de pontos máxima
-3:
-A Checagem da raça é feita por um switch, então adicione um caso numérico para ser validado e, caso as raças dêem bônus em mais atributos, adicione uma linha extra de atribuição de valores extras, dessa forma: statusp[bdr[n][escr - 1]] += vbdr[n][escr - 1]; sendo n uma linha qualquer de bdr[][] e vbdr[][] que você tenha adicionado

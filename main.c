@@ -1,172 +1,177 @@
 #include <stdio.h>
 #include <string.h>
-#define pontosstatus 20
-#define limitestatus 5
-#define classesmax 4
-#define racamax 4
-#define qtdbonusraca 2
+#define MaxStsPoints 20
+#define MinPtsPerAtr 1
+#define MaxPtsPerAtr 5
+#define MaxClass 4
+#define MaxRace 4
+#define QtdBnsRace 2
+#define MaxName 15
 
 //------/-------------------------------------------------------------------------//
-int SetVesselStatus() {
-    int statusp[6];
-    for (int cc = 0; cc < 6; cc++) {
-        statusp[cc] = 0;
-    }
-}
+typedef struct {
+    char ClassName[15];
+    int BaseHP;
+    int BaseMana;
+    int ArmorClass;
+} ClassModel;
+
+typedef struct {
+    char RaceName[12];
+    int BonusRace[QtdBnsRace];
+    int BnsValue[QtdBnsRace];
+} RaceModel;
+
+typedef struct {
+    char CaracPlayer[3][MaxName];
+    int AtrPlayer[3];
+    int StatPlayer[6];
+ }Player;
+
+typedef struct {
+    char Stats[6][10];
+    char Atributes[3][20];
+    char Characteristics[3][10];
+} PrintName;
+
+int PtsLasting = MaxStsPoints;
+int FlagYN = 0;
+Player Sheet;
+
+void ResetingStats(char Confirm);
 //---------------------------------------------------------------------------------------//
-int main()
-{
-    //ordem: Clérigo, Guerreiro, Bardo, Ladino//
-    //status base//
-    int statusbaseclasse[3][classesmax] = {
-        {12, 20, 16, 14},
-        {20, 12, 16, 14},
-        {14, 16, 15, 15}
+int main() {
+   
+    int PrintCycle= 0;
+    int PtsDestined, PtValid;
+
+    enum Stats {
+        STR = 0, NAME = 0, HP = 0,
+        DEX = 1, CLASS = 1, MANA = 1,
+        VIG = 2, RACE = 2, CA = 2,
+        INT = 3,
+        SAB = 4,
+        CHR = 5,
+    };
+    
+    ClassModel classes[MaxClass] = {
+        {"Clérigo", 12, 20, 14},
+        {"Guerreiro", 20, 12, 16},
+        {"Bardo", 14, 16, 15},
+        {"Ladino", 16, 14, 15},
     };
 
-   //bonus de raça//
-   //ordem: Sireno, Polar, Gatuno, Harpia//
-        //atributo
-    int bdr[qtdbonusraca][classesmax] = {
-        {1, 0, 1, 4},
-        {4, 2, 3, 3}
+    RaceModel Races[MaxRace] = {
+        {"Sireno", {DEX, SAB}, {2,3}},
+        {"Polar", {STR, VIG}, {1,4}},
+        {"Gatuno", {DEX, INT}, {3,2}},
+        {"Harpia", {INT, SAB}, {2,3}},
     };
-        //valor//
-    int vbdr[qtdbonusraca][classesmax] = {
-        {2, 1, 3, 2},
-        {3, 4, 2, 3}
+
+
+    PrintName Printable = {
+        {"Força", "Destreza","Vigor","Intelecto","Sabedoria","Carisma"},
+        {"Vida máxima", "Mana máxima", "Classe de Armadura"},
+        {"Nome", "Classe", "Raça"},
     };
-    
-    char statusnome[6][10] = {
-        "Força",
-        "Destreza",
-        "Vigor",
-        "Intelecto",
-        "Sabedoria",
-        "Carisma"
-        
-    };
-    char atrnome[3][20] = {
-        "Vida máxima",
-        "Mana máxima",
-        "Classe de Armadura"
-    };
-    char caracteristicas[3][10] = {
-        "Nome",
-        "Raça",
-        "Classe"
-    };
-    
-    char racas[racamax][15] = {
-        "Sireno",
-        "Polar",
-        "Gatuno",
-        "Harpia"
-    };
-    
-    char classes[classesmax][15] = {
-        "Clérigo",
-        "Guerreiro",
-        "Bardo",
-        "Ladino"
-    };
-    
-    //status do player//
-    char caracp[3][20];
-    //hp, mana, ca//
-    int atrb[3];
-    //for, dex, vig int, sab, car//
-    int statusp[6];
-    
-    //operações e variáveis sistemicas//
-    int ee, ea, ec = 0;
-    int checkr, checks;
-    int esccl, escr;
-    
-    for (int cc = 0; cc < 6; cc++) {
-        statusp[cc] = 0;
-    }
+
+
+    int ClassSelected, RaceSelected;
     
     printf("Qual o nome de seu personagem? Máximo de 20 caracteres \n");
-    fgets(caracp[0], sizeof(caracp[0]), stdin);
-  
-  //classe//
+    fgets(Sheet.CaracPlayer[NAME], sizeof(Sheet.CaracPlayer[NAME]), stdin);
+    Sheet.CaracPlayer[NAME][strcspn(Sheet.CaracPlayer[NAME], "\n")] = '\0';
+
+
     printf("Qual será sua classe? \n");
-    for (int gg = 0; gg < classesmax; gg++) {
-        printf("\t %d. %s \n", gg + 1, classes[gg]);
+    for (int aa = 0; aa < MaxClass; aa++) {
+        printf("\t %d. %s \n", aa + 1, classes[aa].ClassName);
     }
-    scanf("%d",&esccl);
-    for (int hh = 0; hh < 3; hh++) {
-        atrb[hh] = statusbaseclasse[hh][esccl - 1];
-    }
-    strcpy(caracp[2],classes[esccl - 1]);
-    
-    //atributos//
-    printf("Defina seus atributos. Você tem %d pontos para dividir entre todos. \n", pontosstatus);
-    checks = pontosstatus;
-    
-    
-    for (ee = 0; ee < 6 && ec == 0; ee++) {
-        printf("Quantos pontos colocará em %s? Pode, no máximo %d \n", statusnome[ee], limitestatus);
-        printf("Você tem %d pontos restantes. \n", checks);
-        scanf("%d", &ea);
-        if (ea > limitestatus || ea < 0){
-            printf("Opção inválida. Digite outra vez, corretamente agora. \n");
-            ee--;
-            continue;
-        } else {
-            statusp[ee] += ea;
-            checks -= statusp[ee];
-        }
-        
-        
-        }
-        if (checks > 0) {
-            printf("Houve sobra de pontos. Redistribua corretamente, por favor. se não usar esses pontos agora, você os perderá. \n");
-            ee = 0;
-        } 
-    
-    
-    printf("Qual será sua raça? \n");
-    for (int ii = 0; ii < racamax; ii++) {
-      printf("\t %d.%s. Bônus em %s e %s. \n",ii + 1, racas[ii], statusnome[bdr[0][ii]], statusnome[bdr[1][ii]]);  
-    }
-    
-    //raça//
+    scanf("%d", &ClassSelected);
+    while (getchar() != '\n');
+    strcpy(Sheet.CaracPlayer[CLASS],classes[ClassSelected - 1].ClassName);
+    Sheet.AtrPlayer[HP] = classes[ClassSelected - 1].BaseHP;
+    Sheet.AtrPlayer[MANA] = classes[ClassSelected -1].BaseMana;
+    Sheet.AtrPlayer[CA] = classes[ClassSelected -1].ArmorClass;
+
+
     do {
-        scanf("%d",&escr);
-        switch(escr) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-            statusp[bdr[0][escr - 1]] += vbdr[0][escr - 1];
-            statusp[bdr[1][escr - 1]] += vbdr[1][escr - 1];
-            checkr = 1;
-            break;
-        default: 
-        printf("Opção inválida.");
+        char Confirm;
+
+        for (int bb = 0; bb < 6; bb++) {
+        if (PtsLasting)
+        printf("Quantos pontos você colocará em %s? Você tem %d pontos. Limite de %d por atributo. \n", Printable.Stats[bb], PtsLasting, MaxPtsPerAtr);
+        do {
+            PtValid = 0;
+            scanf("%d", &PtsDestined);
+            while (getchar() != '\n');
+            if (PtsDestined < MinPtsPerAtr || PtsDestined > MaxPtsPerAtr) {
+                printf("Opção inválida. Escolha um valor dentro do intervalo (De %d a %d) \n", MinPtsPerAtr, MaxPtsPerAtr);
+            } else if (PtsDestined > PtsLasting) {
+                printf("Erro! A quantia selecionada é maior do que a quantia de pontos disponíveis. Lembre-se, você só tem %d pontos restantes \n", PtsLasting);
+            }else {
+                PtValid = 1;
+                PtsLasting -= PtsDestined;
+                Sheet.StatPlayer[bb] = PtsDestined;
+            }
+        } while (PtValid == 0);
     }
 
-    } while (checkr != 1);
-    strcpy(caracp[1],racas[escr - 1]);
+        if (PtsLasting > 0) {
+            printf("Você deixou %d pontos restantes. Esses pontos serão permanentemente perdidos. Você quer redistribuir seus pontos? (S/N)", PtsLasting);
+            scanf("%c", &Confirm);
+            while (getchar() != '\n');
+            ResetingStats(Confirm);
+        } else {
+            FlagYN = 1;
+        }
+    } while (FlagYN == 0);
+    
+    
+    
 
-    //soma de atributos//
-    atrb[0] += statusp[2];
-    atrb[1] += statusp[3];
-    atrb[2] += statusp[2];
-   
-    //imprime a ficha//
-    
-    for (int ff = 0; ff < 3; ff++) {
-        printf("%s: %s \n", caracteristicas[ff],caracp[ff]);
+    printf("Escolha sua raça: \n");
+    for (int cc = 0; cc < MaxRace; cc++) {
+        printf("\t %d. %s: Bônus em %s e %s \n", cc + 1, Races[cc].RaceName, Printable.Stats[Races[cc].BonusRace[0]], Printable.Stats[Races[cc].BonusRace[1]]);
     }
-    for (int bb = 0; bb < 3; bb++) {
-        printf("%s: %d \n", atrnome[bb], atrb[bb]);
+    scanf("%d", &RaceSelected);
+    while (getchar() != '\n');
+    strcpy(Sheet.CaracPlayer[RACE],Races[RaceSelected - 1].RaceName);
+    for (int dd = 0; dd < QtdBnsRace; dd++) {
+        Sheet.StatPlayer[Races[RaceSelected - 1].BonusRace[dd]] += Races[RaceSelected - 1].BnsValue[dd];
     }
-    for (int aa = 0; aa < 6; aa++) {
-        printf("%s: %d \n", statusnome[aa], statusp[aa]);
+
+    //final set
+    Sheet.AtrPlayer[HP] += Sheet.StatPlayer[VIG];
+    Sheet.AtrPlayer[MANA] += Sheet.StatPlayer[INT];
+    Sheet.AtrPlayer[CA] += Sheet.StatPlayer[VIG];
+
+    for (PrintCycle = 0;PrintCycle < 3; PrintCycle++) {
+        printf("%s: %s \n", Printable.Characteristics[PrintCycle], Sheet.CaracPlayer[PrintCycle]);
     }
-    
+    for (PrintCycle = 0;PrintCycle < 3; PrintCycle++) {
+        printf("%s: %d \n", Printable.Atributes[PrintCycle], Sheet.AtrPlayer[PrintCycle]);
+    }
+    for (PrintCycle = 0;PrintCycle < 6; PrintCycle++) {
+        printf("%s: %d \n", Printable.Stats[PrintCycle], Sheet.StatPlayer[PrintCycle]);
+    }
+
     return 0;
+}
+
+void ResetingStats(char Confirm) {
+    switch (Confirm) {
+    case 'S':
+    case 's':
+        for (int bb = 0; bb < 6; bb++) {
+            Sheet.StatPlayer[bb] = 0;
+        }
+        PtsLasting = MaxStsPoints;
+        break;
+    
+    case 'N':
+    case 'n':
+        FlagYN = 1;
+        break;
+    }
 }
